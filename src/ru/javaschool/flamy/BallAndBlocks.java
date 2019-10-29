@@ -8,10 +8,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class BallAndBlocks extends Application {
+public class BallAndBlocks extends Application implements Constant {
 
-    public static final int WINDOW_WIDTH = 500;
-    public static final int WINDOW_HEIGHT = 500;
 
     private GraphicsContext gc;
     private DrawUI drawUI;
@@ -40,6 +38,9 @@ public class BallAndBlocks extends Application {
                     break;
                 case RIGHT:
                     platform.moveRight();
+                    break;
+                case SPACE:
+                    world.getBall().start();
                     break;
             }
         });

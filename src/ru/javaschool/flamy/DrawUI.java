@@ -28,7 +28,7 @@ public class DrawUI implements Runnable {
             while (!stopped) {
                 world.newState();
                 paint();
-                Thread.sleep(66);
+                Thread.sleep(10);
 
                 while (suspend) wait();
             }
