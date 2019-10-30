@@ -9,9 +9,11 @@ public class Platform implements Drawable, HavingNextStation, Constant {
     private Position position;
     private int height = PLATFORM_HEIGHT, width = PLATFORM_WIDTH;
     private boolean moving = false;
+    private int speed;
 
     public Platform(double x, double y, double vectorX, double vectorY, int speed) {
-        position = new Position(x, y, vectorX, vectorY, speed);
+        position = new Position(x, y, vectorX, vectorY);
+        this.speed = speed;
     }
 
     public boolean isMoving() {
@@ -46,9 +48,7 @@ public class Platform implements Drawable, HavingNextStation, Constant {
     @Override
     public void nextState() {
         if (moving) {
-            Position oldPosition = position.nextPosition();
-            if (position.getCoord().getX() + width > WINDOW_HEIGHT) position.setCoord(new Point2D(WINDOW_HEIGHT-width, position.getCoord().getY()));
-            if (position.getCoord().getX() < 0) position.setCoord(new Point2D(0, position.getCoord().getY()));
+            position.nextPosition(speed);
         }
     }
 
@@ -56,7 +56,8 @@ public class Platform implements Drawable, HavingNextStation, Constant {
         return new AABB(position.getCoord(),position.getCoord().add(PLATFORM_WIDTH,PLATFORM_HEIGHT));
     }
 
-    public Point2D getCoord() {
-        return position.getCoord();
-    }
+    public Position getPosition() { return position; }
+
+    public int getHeight() { return height; }
+    public int getWidth() {return width; }
 }

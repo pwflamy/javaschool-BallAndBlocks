@@ -5,6 +5,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -14,6 +15,7 @@ public class BallAndBlocks extends Application implements Constant {
     private GraphicsContext gc;
     private DrawUI drawUI;
     private World world;
+    private MyThread thread;
 
     public static void main(String[] args) {
         launch(args);
@@ -21,36 +23,44 @@ public class BallAndBlocks extends Application implements Constant {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        world = new World();
-
         Group root = new Group();
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.BLACK);
 
         Canvas canvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
+        world = new World();
+        drawUI = new DrawUI(gc, world);
+
         canvas.setFocusTraversable(true);
         canvas.setOnKeyPressed(event -> {
-            Platform platform = world.getPlatform();
             switch (event.getCode()) {
                 case LEFT:
-                    platform.moveLeft();
+                    world.platformLeft();
                     break;
                 case RIGHT:
-                    platform.moveRight();
+                    world.platformRight();
                     break;
                 case SPACE:
-                    world.getBall().start();
+                    if (!world.gameEnd)
+                        world.startGame();
+                    else {
+                        if (thread.thread.getState() == Thread.State.TERMINATED) {
+                            reset();
+                            thread = new MyThread(drawUI, world);
+                        }
+                    }
                     break;
             }
         });
         canvas.setOnKeyReleased(event -> {
-            Platform platform = world.getPlatform();
-            switch (event.getCode()) {
-                case LEFT:
-                case RIGHT:
-                    platform.moveStop();
-                    break;
+            if (!world.gameEnd && world.gameOn) {
+                switch (event.getCode()) {
+                    case LEFT:
+                    case RIGHT:
+                        world.platformStop();
+                        break;
+                }
             }
         });
         root.getChildren().add(canvas);
@@ -61,7 +71,12 @@ public class BallAndBlocks extends Application implements Constant {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        thread = new MyThread(drawUI, world);
+    }
 
+    private void reset() {
+        gc.clearRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        world = new World();
         drawUI = new DrawUI(gc, world);
     }
 }

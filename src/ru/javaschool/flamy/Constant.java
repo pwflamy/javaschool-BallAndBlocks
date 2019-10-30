@@ -8,6 +8,8 @@ public interface Constant {
     int PLATFORM_WIDTH = 100;
     int PLATFORM_HEIGHT = 10;
     int BALL_SIZE = 8;
+    int BLOCK_WIDTH = 100;
+    int BLOCK_HEIGHT = 50;
 
     Point2D VECTOR_LEFT = new Point2D(-1,0);
     Point2D VECTOR_RIGHT = new Point2D(1, 0);

@@ -3,6 +3,7 @@ package ru.javaschool.flamy;
 import javafx.geometry.Point2D;
 
 import javax.sound.sampled.Line;
+import java.util.Arrays;
 
 public class AABB implements Constant {
     private Point2D min, max;
@@ -16,60 +17,48 @@ public class AABB implements Constant {
         maxY = max.getY();*/
     }
 
+    public Point2D getMin() { return min; }
+    public Point2D getMax() { return max; }
+
     public boolean testAABB(AABB test) {
         if ((max.getX() < test.min.getX()) || (min.getX() > test.max.getX())) return false;
         if ((max.getY() < test.min.getY()) || (min.getY() > test.max.getY())) return false;
         return true;
     }
 
-    public Point2D normalToAABB(AABB test, Point2D coordA, Point2D coordB) {
-        Point2D n = coordA.subtract(coordB);
+    public Point2D normalToAABB(AABB test) {
         // Вычисление половины ширины вдоль оси x для каждого объекта
         double a_extent = (max.getX() - min.getX()) / 2;
         double b_extent = (test.max.getX() - test.min.getX()) / 2;
 
-        // Вычисление наложения по оси x
-        double x_overlap = a_extent + b_extent - Math.abs(n.getX());
         // Вычисление половины ширины вдоль оси y для каждого объекта
         double a_extentY = (max.getY() - min.getY()) / 2;
         double b_extentY = (test.max.getY() - test.min.getY()) / 2;
 
+        Point2D n = new Point2D(test.min.getX()+b_extent,test.min.getY()+b_extentY)
+                .subtract(new Point2D(min.getX()+a_extent,min.getY()+a_extentY));
+
+        // Вычисление наложения по оси x
+        double x_overlap = a_extent + b_extent - Math.abs(n.getX());
         // Вычисление наложения по оси y
         double y_overlap = a_extentY + b_extentY - Math.abs(n.getY());
         // Проверка SAT по оси x и у
-        if ((x_overlap > 0) || (y_overlap > 0)) {
+        if ((x_overlap > 0) && (y_overlap > 0)) {
                 // Определяем, по какой из осей проникновение наименьшее
                 if (x_overlap > y_overlap) {
                     // Указываем в направлении B, зная, что n указывает в направлении от A к B
-                    if (n.getX() < 0)
-                        return VECTOR_LEFT;
+                    if (n.getY() < 0)
+                        return VECTOR_DOWN;
                     else
-                        return VECTOR_RIGHT;
+                        return VECTOR_UP;
                 } else {
                     // Указываем в направлении B, зная, что n указывает в направлении от A к B
-                    if (n.getY() < 0)
-                        return VECTOR_UP;
+                    if (n.getX() < 0)
+                        return VECTOR_RIGHT;
                     else
-                        return VECTOR_DOWN;
+                        return VECTOR_LEFT;
                 }
         }
         return Point2D.ZERO;
-    }
-
-    private Lines[] getLines(AABB test) {
-        Lines[] result = new Lines[4];
-        result[0] = new Lines(test.min, new Point2D(test.max.getX(),test.min.getY()));
-        result[1] = new Lines(new Point2D(test.max.getX(),test.min.getY()),test.max);
-        result[2] = new Lines(new Point2D(test.min.getX(),test.max.getY()),test.max);
-        result[3] = new Lines(test.min, new Point2D(test.min.getX(),test.max.getY()));
-        return result;
-    }
-
-    private class Lines {
-        Point2D a,b;
-        Lines(Point2D a, Point2D b) {
-            this.a = a;
-            this.b = b;
-        }
     }
 }
