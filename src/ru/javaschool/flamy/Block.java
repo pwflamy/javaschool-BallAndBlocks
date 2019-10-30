@@ -4,7 +4,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Block implements Drawable, Constant {
+import static ru.javaschool.flamy.Constant.*;
+
+public class Block implements Drawable {
 
     private Position position;
     private int width = BLOCK_WIDTH, height = BLOCK_HEIGHT;

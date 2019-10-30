@@ -5,8 +5,9 @@ import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
+import static ru.javaschool.flamy.Constant.*;
 
-public class World implements Constant {
+public class World {
     private ArrayList<Drawable> drawableObject = new ArrayList<>();
     private ArrayList<HavingNextStation> havingNextStations = new ArrayList<>();
 
@@ -20,14 +21,15 @@ public class World implements Constant {
     public boolean gameEnd = false;
 
     public World() {
-        platform = new Platform(200,470, 0,0, 5);
-        ball = new Ball(200+Constant.PLATFORM_WIDTH/2-BALL_SIZE/2,470-BALL_SIZE, 0, 0, 5);
+        platform = new Platform(PLATFORM_START_X,PLATFORM_START_Y, 0,0, 10);
+        ball = new Ball(PLATFORM_START_X+Constant.PLATFORM_WIDTH/2-BALL_SIZE/2,PLATFORM_START_Y-BALL_SIZE, 0, 0, 10);
         score = new Score(20,20);
         drawableObject.add(platform);
         drawableObject.add(ball);
         drawableObject.add(score);
         havingNextStations.add(platform);
         havingNextStations.add(ball);
+        //создание и распределение блоков по полю
         for (int i = 0; i < WINDOW_HEIGHT / 2 / (BLOCK_HEIGHT+10); i++)
             for (int j = 0; j < WINDOW_WIDTH / (BLOCK_WIDTH+20); j++) {
                 Block block = new Block(20 + j * (BLOCK_WIDTH+20), 40 + i*(BLOCK_HEIGHT+10));
@@ -62,15 +64,23 @@ public class World implements Constant {
         }
     }
 
+    /**
+     * Метод, проверяющий столкновение платформы со стенками.
+     */
     private void platformCollisions() {
         Position position = platform.getPosition();
         if (position.getCoord().getX() + platform.getWidth() > WINDOW_HEIGHT) position.setCoord(new Point2D(WINDOW_HEIGHT-platform.getWidth(), position.getCoord().getY()));
         if (position.getCoord().getX() < 0) position.setCoord(new Point2D(0, position.getCoord().getY()));
     }
 
+    /**
+     * Метод, проверяющий столкновения шарика с объектами.
+     * @param oldPosition предыдущее положение шарика
+     */
     private void ballCollisions(Position oldPosition) {
         Position position = ball.getPosition();
         Point2D coord = position.getCoord();
+        //столкновения со стенками
         if (coord.getX()+ball.getSize() > WINDOW_WIDTH) {
             position.setCoord(Position.pointIntersection(oldPosition.getCoord(), coord,
                     new Point2D(WINDOW_WIDTH-BALL_SIZE,0), new Point2D(WINDOW_WIDTH-BALL_SIZE, WINDOW_HEIGHT)));
@@ -88,11 +98,13 @@ public class World implements Constant {
             gameEnd = true;
             ball.stop();
         }
+        //столкновения с платформой
         AABB myAABB = ball.getAABB();
         AABB platformAABB = platform.getAABB();
         if (coord.getY() > 470-BALL_SIZE && myAABB.testAABB(platformAABB)) {
             position.reflectDirection(myAABB.normalToAABB(platformAABB));
         }
+        //столкновения с блоками
         ListIterator<Block> li = listBlocks.listIterator();
         while (li.hasNext()) {
             Block block = li.next();

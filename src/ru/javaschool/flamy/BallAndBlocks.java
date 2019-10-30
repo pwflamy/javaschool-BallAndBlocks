@@ -5,17 +5,18 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class BallAndBlocks extends Application implements Constant {
+import static ru.javaschool.flamy.Constant.*;
+
+public class BallAndBlocks extends Application {
 
 
     private GraphicsContext gc;
     private DrawUI drawUI;
     private World world;
-    private MyThread thread;
+    private MyAnimationTimer myAnimationTimer;
 
     public static void main(String[] args) {
         launch(args);
@@ -42,13 +43,12 @@ public class BallAndBlocks extends Application implements Constant {
                     world.platformRight();
                     break;
                 case SPACE:
-                    if (!world.gameEnd)
-                        world.startGame();
-                    else {
-                        if (thread.thread.getState() == Thread.State.TERMINATED) {
-                            reset();
-                            thread = new MyThread(drawUI, world);
-                        }
+                    if (!world.gameEnd) {
+                        if (!world.gameOn) world.startGame();
+                    } else {
+                        reset();
+                        myAnimationTimer = new MyAnimationTimer(world, drawUI);
+                        myAnimationTimer.start();
                     }
                     break;
             }
@@ -71,7 +71,8 @@ public class BallAndBlocks extends Application implements Constant {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        thread = new MyThread(drawUI, world);
+        myAnimationTimer = new MyAnimationTimer(world, drawUI);
+        myAnimationTimer.start();
     }
 
     private void reset() {

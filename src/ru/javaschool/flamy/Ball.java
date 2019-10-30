@@ -4,8 +4,9 @@ import javafx.scene.canvas.GraphicsContext;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import static ru.javaschool.flamy.Constant.*;
 
-public class Ball implements Drawable, HavingNextStation, Constant{
+public class Ball implements Drawable, HavingNextStation{
 
     private final Position position;
     private int size = BALL_SIZE;

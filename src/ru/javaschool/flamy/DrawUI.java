@@ -3,8 +3,9 @@ package ru.javaschool.flamy;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import static ru.javaschool.flamy.Constant.*;
 
-public class DrawUI implements Constant {
+public class DrawUI {
 
     private World world;
     private GraphicsContext gc;

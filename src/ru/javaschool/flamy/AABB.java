@@ -4,8 +4,13 @@ import javafx.geometry.Point2D;
 
 import javax.sound.sampled.Line;
 import java.util.Arrays;
+import static ru.javaschool.flamy.Constant.*;
 
-public class AABB implements Constant {
+/**
+ * Класс, представляющий собой объект axis-aligned bounding box, и реализующий
+ * работу с столкновениями
+ */
+public class AABB {
     private Point2D min, max;
 
     public AABB(Point2D min, Point2D max) {

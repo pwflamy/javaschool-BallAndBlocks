@@ -3,8 +3,9 @@ package ru.javaschool.flamy;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import static ru.javaschool.flamy.Constant.*;
 
-public class Platform implements Drawable, HavingNextStation, Constant {
+public class Platform implements Drawable, HavingNextStation {
 
     private Position position;
     private int height = PLATFORM_HEIGHT, width = PLATFORM_WIDTH;
